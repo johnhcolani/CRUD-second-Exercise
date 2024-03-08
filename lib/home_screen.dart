@@ -10,8 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
   List<Map<String, dynamic>> _task = [];
 
   @override
@@ -76,8 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(10.0),
             child: TextField(
               controller: _titleController,
-              decoration: InputDecoration(
-                hintText: 'Task Title',
+              decoration: const InputDecoration(
+                hintText: 'Product Title',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -86,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(10.0),
             child: TextField(
               controller: _descController,
-              decoration: InputDecoration(
-                hintText: 'Task Description',
+              decoration: const InputDecoration(
+                hintText: 'Description',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -103,6 +103,10 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: _task.length,
               itemBuilder: (context, index) {
                 final task = _task[index];
+                TextEditingController _editTitleController =
+                    TextEditingController(text: task['title']);
+                TextEditingController _editDescController =
+                    TextEditingController(text: task['desc']);
                 return Card(
                   child: ListTile(
                     title: Text(task['title']),
@@ -112,10 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            // Initialize controllers with the current task values
-                            _titleController.text = task['title'];
-                            _descController.text = task['desc'];
-
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
@@ -124,27 +124,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     TextField(
-                                      controller: _titleController,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          // Update the controller value as it changes
-                                          _titleController.text = value;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
+                                      controller: _editTitleController,
+                                      decoration: const InputDecoration(
                                         hintText: 'Task Title',
                                         border: OutlineInputBorder(),
                                       ),
                                     ),
                                     TextField(
-                                      controller: _descController,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          // Update the controller value as it changes
-                                          _descController.text = value;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
+                                      controller: _editDescController,
+                                      decoration: const InputDecoration(
                                         hintText: 'Task Description',
                                         border: OutlineInputBorder(),
                                       ),
@@ -154,7 +142,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 actions: [
                                   TextButton(
                                     onPressed: () async {
-                                      await updateTask(task['id'], _titleController.text, _descController.text);
+                                      await updateTask(
+                                          task['id'],
+                                          _editTitleController.text,
+                                          _editDescController.text);
                                       Navigator.pop(context);
                                     },
                                     child: const Text('Update'),
@@ -165,8 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           icon: const Icon(Icons.edit),
                         ),
-
-
                         TextButton(
                           onPressed: () async {
                             await deleteTask(task['id']);

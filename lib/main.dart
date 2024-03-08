@@ -4,24 +4,25 @@ import 'package:sqflite/sqflite.dart';
 
 import 'home_screen.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final database = openDatabase(
-    join(await getDatabasesPath(),'tasks_database.db'),
-  onCreate: (db,version){
+    join(await getDatabasesPath(), 'tasks_database.db'),
+    onCreate: (db, version) {
       return db.execute(
-      'CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, desc TEXT)'
-      );
-  },
+          'CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, desc TEXT)');
+    },
     version: 1,
   );
 
-  runApp( MyApp(database: database,));
+  runApp(MyApp(
+    database: database,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final Future<Database> database;
-  const MyApp({super.key,required this.database});
+  const MyApp({super.key, required this.database});
 
   // This widget is the root of your application.
   @override
@@ -29,10 +30,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'CRUD App',
-      theme:ThemeData(
-
-      primarySwatch: Colors.lime,
+      theme: ThemeData(
+        primarySwatch: Colors.lime,
       ),
-      home:HomeScreen(database:database),
-    );}
+      home: HomeScreen(database: database),
+    );
+  }
 }
